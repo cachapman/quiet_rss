@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-namespace quiet_rss
+namespace QuietRssApi
 {
     public class Startup
     {
@@ -30,7 +30,7 @@ namespace quiet_rss
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "quiet_rss", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "QuietRssApi", Version = "v1" });
             });
         }
 
@@ -41,7 +41,7 @@ namespace quiet_rss
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "quiet_rss v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "QuietRssApi v1"));
             }
 
             app.UseHttpsRedirection();
