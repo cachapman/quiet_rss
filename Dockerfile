@@ -7,8 +7,6 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["QuietRssApi.csproj", "."]
-RUN dotnet restore "./QuietRssApi.csproj"
 COPY . .
 WORKDIR "/src/."
 RUN dotnet build "QuietRssApi.csproj" -c Release -o /app/build
