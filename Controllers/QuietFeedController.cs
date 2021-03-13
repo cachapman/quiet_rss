@@ -12,30 +12,25 @@ namespace QuietRssApi.Controllers
     public class QuietFeedController : ControllerBase
     {
 
-        private List<RssCompanyModel> _db;
-
         public QuietFeedController()
         {
-            _db = new List<RssCompanyModel>();
+            if(DbContext._db == null)
+                DbContext._db = new List<CompanyRssModel>();
         }
 
         //[Authorize]
         [HttpPost]
-        public IActionResult Post([FromBody] string company, string rss_uri)
+        public IActionResult Post([FromBody] CompanyRssModel companyRssModel)
         {
-            if (!Uri.IsWellFormedUriString(rss_uri, UriKind.RelativeOrAbsolute))
+
+            if (!Uri.IsWellFormedUriString(companyRssModel.RssUri, UriKind.RelativeOrAbsolute))
             {
                 return new BadRequestResult();
             }
+            companyRssModel.Id = Guid.NewGuid();
 
-            var entry = new RssCompanyModel
-            {
-                Id = Guid.NewGuid(),
-                Data = new Tuple<string, string>(company, rss_uri)
-            };
-
-            _db.Add(entry);
-            return new CreatedResult("/" + entry.Id.ToString(), entry);
+            DbContext._db.Add(companyRssModel);
+            return new CreatedResult("/" + companyRssModel.Id.ToString(), companyRssModel);
 
         }
 
@@ -48,7 +43,7 @@ namespace QuietRssApi.Controllers
             {
                 if (Guid.TryParse(id, out Guid gId))
                 {
-                    _db.Remove(_db.Where(r => r.Id == gId).Single());
+                    DbContext._db.Remove(DbContext._db.Where(r => r.Id == gId).Single());
                     return new OkResult();
                 }
                 return new BadRequestResult();
@@ -64,7 +59,7 @@ namespace QuietRssApi.Controllers
         [HttpGet]
         public HashSet<RssSummary> Get(double days = 5)
         {
-            return RssRetriever.GetQuietFeeds(_db.Select(x => x.Data).ToList(), days);
+            return RssRetriever.GetQuietFeeds(DbContext._db.Select(x => x.ToTuple).ToList(), days);
         }
     }
 }
